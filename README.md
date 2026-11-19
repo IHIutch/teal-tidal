@@ -9,7 +9,7 @@ This is an independent prototype, not an official TIDAL or teal.fm product.
 
 ## Install
 
-Requires Node.js 22+ to build, and Chrome / Chromium 120+ to run.
+Requires Node.js 22.18+, 24.11+, or 26+ to build, and Chrome / Chromium 120+ to run.
 
 ```sh
 npm ci
@@ -89,6 +89,10 @@ Checks strict TypeScript types, playback and metadata fixtures, retry behavior,
 account isolation, atcute requests and token refresh, and an extension message-flow
 test with mocked Chrome APIs and a mocked PDS. Then builds the production bundle.
 No test publishes to a real account.
+
+Bundling uses [tsdown](https://tsdown.dev/) through `scripts/build.ts`. The
+background worker and popup use ESM; the content script uses IIFE. All runtime
+dependencies are bundled, and static assets and license notices are included.
 
 ## MVP limitations
 

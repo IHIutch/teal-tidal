@@ -41,7 +41,8 @@ test('extension flow: connect, capture, survive restart, retry once, and protect
     if (url.endsWith('deleteSession')) return new Response(null, { status: 200 });
     throw new Error(`Unexpected request: ${url}`);
   });
-  await import('../src/background');
+  const backgroundModule = process.env.TEST_BACKGROUND_BUNDLE ? '../dist/background.js' : '../src/background.ts';
+  await import(backgroundModule);
   const ui = { id: runtimeId, url: mockChrome.runtime.getURL('popup.html') };
   const page: chrome.runtime.MessageSender = { id: runtimeId, url: 'https://listen.tidal.com/album/1', tab: { id: 1 } as chrome.tabs.Tab, frameId: 0 };
   const send = (message: unknown, sender: chrome.runtime.MessageSender = ui) => new Promise<any>(resolve => {
@@ -66,7 +67,7 @@ test('extension flow: connect, capture, survive restart, retry once, and protect
   assert.equal(response.status.sent, 0);
   assert.equal(recordIds.length, 1);
   // Simulate service-worker termination and restart, preserving browser storage.
-  const restartedModule = '../src/background.ts?restart';
+  const restartedModule = `${backgroundModule}?restart`;
   await import(restartedModule);
   clock += 1000;
   await send(sample(4), page);
