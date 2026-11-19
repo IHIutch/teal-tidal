@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { Client, simpleFetchHandler } from '@atcute/client';
 import { PasswordSession } from '@atcute/password-session';
-import { publish, serviceUrl } from '../src/atproto';
+import { publish } from '../src/atproto';
 import { pending } from './helpers';
 
 test('atcute sends the current teal record with a stable TID on retries', async () => {
@@ -41,10 +41,4 @@ test('atcute refreshes expired access tokens and uses the saved PDS endpoint', a
   assert.ok(calls.some(call => call.authorization === 'Bearer renewed'));
   assert.ok(calls.filter(call => call.url.endsWith('putRecord')).every(call => call.url.startsWith('https://pds.example/')));
   assert.ok(calls.some(call => call.url === 'https://bsky.social/xrpc/com.atproto.server.refreshSession' && call.authorization === 'Bearer refresh'));
-});
-test('login server must be an HTTPS origin with no embedded credentials', () => {
-  assert.equal(serviceUrl('https://bsky.social/'), 'https://bsky.social');
-  for (const url of ['http://pds.example', 'https://user:secret@pds.example', 'https://pds.example/path', 'https://pds.example?token=x']) {
-    assert.throws(() => serviceUrl(url));
-  }
 });

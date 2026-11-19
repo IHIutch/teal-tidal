@@ -19,15 +19,11 @@
         <label for="password">App password</label>
         <input id="password" name="password" type="password" placeholder="xxxx-xxxx-xxxx-xxxx" autocomplete="off" required>
         <p class="small">Use an <a href="https://bsky.app/settings/app-passwords" target="_blank" rel="noreferrer">app password</a>, not your main password. It is used to sign in and is never saved. Session tokens stay in this browser.</p>
-        <details><summary>Use another personal data server</summary>
-          <label for="service">Login server</label>
-          <input id="service" type="url" value="https://bsky.social" required>
-        </details>
         <button id="connect" type="submit">Connect & start tracking</button>
       </form>
     </section>
     <section id="connected" hidden>
-      <div class="row"><div><h2>Connected</h2><p id="account"></p></div><label class="toggle"><input id="enabled" type="checkbox"> Track</label></div>
+      <h2>Connected</h2><p id="account"></p>
       <div class="player">
         <p id="player-state" class="eyebrow">Waiting for TIDAL</p>
         <h3 id="track">Play something you love.</h3>

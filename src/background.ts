@@ -1,12 +1,11 @@
 import { Client } from '@atcute/client';
 import { now as tid } from '@atcute/tid';
 import { PasswordSession, type PasswordSessionData } from '@atcute/password-session';
-import { boundedFetch, connect, publish, restoreSession } from './atproto';
+import { boundedFetch, connect, publish } from './atproto';
 import { advance, qualified, toRecord, validSample } from './tracker';
-import { deliver } from './queue';
 import type { Command, Reply, Status, Store } from './types';
 
-const initial: Store = { enabled: true, queue: [], sent: 0 };
+const initial: Store = { queue: [], sent: 0 };
 let store: Store;
 let session: PasswordSessionData | undefined;
 // Serializing storage mutations prevents simultaneous tabs and alarm retries
@@ -30,13 +29,15 @@ function save() { return chrome.storage.local.set({ store }); }
 function status(): Status {
   const live = store.listening && Date.now() - store.listening.sampledAt < 10_000 ? store.listening : undefined;
   return { account: session ? { handle: session.handle, did: session.did } : undefined,
-    enabled: store.enabled, listening: live, queueLength: store.queue.length, sent: store.sent,
-    lastSent: store.lastSent, error: store.error ?? store.queue.find(p => p.error)?.error };
+    listening: live, queueLength: store.queue.length, sent: store.sent,
+    lastSent: store.lastSent, error: store.error };
 }
 
 async function flush() {
-  if (!session || !store.enabled || !store.queue.some(p => p.did === session?.did)) return;
-  const auth = restoreSession(session, {
+  if (!session || !store.queue.length) return;
+  const did = session.did;
+  const auth = new PasswordSession(session, {
+    fetch: boundedFetch,
     async onUpdate(data) {
       session = data;
       await chrome.storage.local.set({ session: data }).catch(() => {
@@ -50,12 +51,21 @@ async function flush() {
     },
   });
   const client = new Client({ handler: auth });
-  await deliver(store.queue, session.did, Date.now(), play => publish(client, play), save,
-    (play, uri) => {
+  for (const play of [...store.queue]) {
+    if (play.did !== did) continue;
+    try {
+      const uri = await publish(client, play);
+      store.queue.splice(store.queue.indexOf(play), 1);
       store.sent++;
       store.lastSent = { title: play.record.trackName, uri, at: Date.now() };
       store.error = undefined;
-    });
+    } catch {
+      store.error ??= 'Could not submit. Retry when online, or reconnect if your session expired.';
+      await save();
+      break;
+    }
+    await save();
+  }
 }
 
 function fromTidal(sender: chrome.runtime.MessageSender): boolean {
@@ -67,7 +77,7 @@ function fromTidal(sender: chrome.runtime.MessageSender): boolean {
 }
 
 async function receiveSample(value: unknown, tabId: number, now: number) {
-  if (!session || !store.enabled) return;
+  if (!session) return;
   if (value === null) {
     if (store.owner?.tabId === tabId && store.listening) {
       store.listening.playing = false;
@@ -84,17 +94,15 @@ async function receiveSample(value: unknown, tabId: number, now: number) {
   }
   store.owner = { tabId, seenAt: now };
   store.listening = advance(store.listening, value, now);
-  if (qualified(store.listening)) {
-    if (store.queue.length >= 1000) {
-      store.error = 'The pending queue is full. Retry pending listens before tracking more.';
-    } else {
-      store.queue.push({ did: session.did, rkey: tid(), record: toRecord(store.listening), attempts: 0, nextAttempt: 0 });
-      store.listening.queued = true;
-    }
+  const captured = qualified(store.listening);
+  if (captured) {
+    store.queue.push({ did: session.did, rkey: tid(), record: toRecord(store.listening) });
+    store.listening.queued = true;
   }
   // Persist the record and queued flag together, before attempting any network IO.
   await save();
-  if (store.queue.some(p => p.did === session?.did && p.nextAttempt <= now)) await flush();
+  // Failed submissions retry on the minute alarm or manually, not every sample.
+  if (captured) await flush();
 }
 
 async function command(message: Command): Promise<Status> {
@@ -102,7 +110,7 @@ async function command(message: Command): Promise<Status> {
     case 'status': break;
     case 'login': {
       if (session) throw new Error('Disconnect the current account before signing in again.');
-      const data = await connect(message.handle, message.password, message.service);
+      const data = await connect(message.handle, message.password);
       if (store.queue.some(p => p.did !== data.did)) {
         // Do not send another account's queued plays to this account.
         await PasswordSession.delete(data, { fetch: boundedFetch }).catch(() => undefined);
@@ -130,16 +138,8 @@ async function command(message: Command): Promise<Status> {
       if (old) await PasswordSession.delete(old, { fetch: boundedFetch }).catch(() => undefined);
       break;
     }
-    case 'toggle':
-      if (typeof message.enabled !== 'boolean') throw new Error('Invalid tracking setting.');
-      store.enabled = message.enabled;
-      store.listening = undefined;
-      store.owner = undefined;
-      await save();
-      break;
     case 'retry':
       store.error = undefined;
-      for (const play of store.queue) play.nextAttempt = 0;
       await save();
       await flush();
       break;
@@ -163,7 +163,7 @@ chrome.runtime.onMessage.addListener((message: unknown, sender, respond) => {
     return { ok: true, status: await command(msg as unknown as Command) };
   };
   void serial(task).then(respond, () => respond({ ok: false,
-    error: 'Could not complete the request. Check your handle, app password, server, and connection.' }));
+    error: 'Could not complete the request. Check your handle, app password, and connection.' }));
   return true;
 });
 

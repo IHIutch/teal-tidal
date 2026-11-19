@@ -6,6 +6,8 @@ export function threshold(duration: number): number {
   return Math.max(Math.min(duration, 120), Math.min(duration / 2, 240));
 }
 export function advance(previous: ListeningState | undefined, sample: Sample, now: number): ListeningState {
+  // MVP limitation: a short track needs its full duration credited. If its
+  // beginning or end wasn't sampled, it may not qualify before the next track.
   const looped = previous && previous.track.id === sample.track.id && sample.playing &&
     sample.position < 3 && previous.position > Math.max(3, sample.track.duration - 3);
   if (!previous || previous.track.id !== sample.track.id || looped) {

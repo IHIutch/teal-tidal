@@ -1,5 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { pending } from './helpers';
+import type { Store } from '../src/types';
 
 test('extension flow: connect, capture, survive restart, retry once, and protect credentials', async t => {
   const memory: Record<string, unknown> = {};
@@ -48,7 +50,7 @@ test('extension flow: connect, capture, survive restart, retry once, and protect
   const send = (message: unknown, sender: chrome.runtime.MessageSender = ui) => new Promise<any>(resolve => {
     listener(message, sender, resolve);
   });
-  const login = await send({ type: 'login', handle: 'test.bsky.social', password: 'test-app-password', service: 'https://bsky.social' });
+  const login = await send({ type: 'login', handle: 'test.bsky.social', password: 'test-app-password' });
   assert.equal(login.ok, true);
   assert.equal(accessLevel, 'TRUSTED_CONTEXTS');
   assert.equal(JSON.stringify(memory).includes('test-app-password'), false);
@@ -66,6 +68,8 @@ test('extension flow: connect, capture, survive restart, retry once, and protect
   assert.equal(response.status.queueLength, 1);
   assert.equal(response.status.sent, 0);
   assert.equal(recordIds.length, 1);
+  // Pending listens belong to their original account, even after a restart.
+  (memory.store as Store).queue.push(pending('did:plc:other'));
   // Simulate service-worker termination and restart, preserving browser storage.
   const restartedModule = `${backgroundModule}?restart`;
   await import(restartedModule);
@@ -73,9 +77,12 @@ test('extension flow: connect, capture, survive restart, retry once, and protect
   await send(sample(4), page);
   assert.equal(recordIds.length, 1);
   offline = false;
-  response = await send({ type: 'retry' });
-  assert.equal(response.status.queueLength, 0);
+  alarmListener!({ name: 'retry', scheduledTime: clock, persistAcrossSessions: true });
+  response = await send({ type: 'status' });
+  assert.equal(response.status.queueLength, 1);
   assert.equal(response.status.sent, 1);
+  assert.equal(recordIds.length, 2);
+  await send({ type: 'retry' });
   assert.equal(recordIds.length, 2);
   assert.equal(recordIds[0], recordIds[1]);
   assert.match(recordIds[0]!, /^[234567a-z]{13}$/);
