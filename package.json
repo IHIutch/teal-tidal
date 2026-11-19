@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "A tiny TIDAL to teal.fm browser extension built with TypeScript and atcute",
   "scripts": {
-    "build": "tsx scripts/build.ts",
+    "build": "tsdown",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
     "check": "npm run typecheck && npm test && npm run build"

@@ -90,9 +90,10 @@ account isolation, atcute requests and token refresh, and an extension message-f
 test with mocked Chrome APIs and a mocked PDS. Then builds the production bundle.
 No test publishes to a real account.
 
-Bundling uses [tsdown](https://tsdown.dev/) through `scripts/build.ts`. The
-background worker and popup use ESM; the content script uses IIFE. All runtime
-dependencies are bundled, and static assets and license notices are included.
+Bundling uses the [tsdown](https://tsdown.dev/) CLI and `tsdown.config.ts`.
+All extension source and assets live in `src/`. The background worker and popup
+use ESM; the content script uses IIFE. Runtime dependencies are bundled, and
+tsdown copies the manifest, HTML, CSS, and MIT notices into `dist/`.
 
 ## MVP limitations
 
@@ -119,8 +120,10 @@ dependencies are bundled, and static assets and license notices are included.
 - `src/atproto.ts`: atcute login and publication.
 - `src/queue.ts`: account-bound delivery and retry backoff.
 - `src/background.ts`: messages, durable state, scheduling, and account isolation.
-- `src/popup.ts`, `public/popup.*`: setup and tracking status.
+- `src/popup.ts`, `src/popup.html`, `src/popup.css`: setup and tracking status.
+- `src/manifest.json`: browser extension manifest.
+- `tsdown.config.ts`: entry points, bundle formats, and copied assets.
 
 MIT licensed. TIDAL selectors are adapted from Web Scrobbler with attribution in
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). The build includes dependency
-license notices in `dist/DEPENDENCY_LICENSES.txt`.
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), copied into `dist/`.
+The bundled atcute packages use 0BSD, which does not require retaining notices.

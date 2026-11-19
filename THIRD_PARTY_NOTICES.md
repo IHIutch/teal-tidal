@@ -25,5 +25,5 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-The build also bundles atcute packages. Their installed license files are
-collected into `dist/DEPENDENCY_LICENSES.txt` during each build.
+The build also bundles atcute packages, licensed under BSD Zero Clause (0BSD).
+That license does not require including copyright or permission notices.
