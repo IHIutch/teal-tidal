@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teal Tidal</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main>
+    <header><span class="mark" aria-hidden="true">t</span><div><h1>Teal Tidal</h1><p>Your listening, in your account.</p></div><span class="badge">MVP</span></header>
+    <p id="notice" role="status" aria-live="polite" hidden></p>
+    <section id="setup">
+      <h2>Connect your account</h2>
+      <p>Track TIDAL web player listens directly for teal.fm. Your published listening history is public.</p>
+      <form id="login">
+        <label for="handle">Bluesky / AT Protocol handle</label>
+        <input id="handle" name="handle" placeholder="you.bsky.social" autocomplete="username" required>
+        <label for="password">App password</label>
+        <input id="password" name="password" type="password" placeholder="xxxx-xxxx-xxxx-xxxx" autocomplete="off" required>
+        <p class="small">Use an <a href="https://bsky.app/settings/app-passwords" target="_blank" rel="noreferrer">app password</a>, not your main password. It is used to sign in and is never saved. Session tokens stay in this browser.</p>
+        <details><summary>Use another personal data server</summary>
+          <label for="service">Login server</label>
+          <input id="service" type="url" value="https://bsky.social" required>
+        </details>
+        <button id="connect" type="submit">Connect & start tracking</button>
+      </form>
+    </section>
+    <section id="connected" hidden>
+      <div class="row"><div><h2>Connected</h2><p id="account"></p></div><label class="toggle"><input id="enabled" type="checkbox"> Track</label></div>
+      <div class="player">
+        <p id="player-state" class="eyebrow">Waiting for TIDAL</p>
+        <h3 id="track">Play something you love.</h3>
+        <p id="artist">Open the TIDAL web player to begin.</p>
+        <progress id="progress" max="1" value="0" aria-label="Listening time toward submission"></progress>
+        <p id="progress-label" class="small">Only time spent playing counts.</p>
+      </div>
+      <div class="stats"><p><strong id="sent">0</strong> submitted</p><p><strong id="pending">0</strong> pending</p></div>
+      <p id="last" class="small"></p>
+      <button id="retry" class="secondary" type="button">Retry pending listens</button>
+    </section>
+    <button id="disconnect" class="quiet" type="button" hidden>Disconnect & clear pending listens</button>
+    <footer><a href="https://listen.tidal.com" target="_blank" rel="noreferrer">Open TIDAL</a><span>No server. No Last.fm.</span></footer>
+  </main>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
