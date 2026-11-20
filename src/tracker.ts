@@ -1,7 +1,8 @@
 import type { ListeningState, PlayRecord, Sample } from './types';
 
-// Whole track below 2 minutes; at least 2 minutes otherwise, increasing to
-// half the track, with a 4 minute cap. Matches the current teal lexicon.
+// Longest-of interpretation of Teal's lexicon: full track below 2 minutes,
+// then a 2 minute floor, half-duration target, and 4 minute cap.
+// Piper's Spotify implementation differs; see docs/teal-thresholds.md.
 export function threshold(duration: number): number {
   return Math.max(Math.min(duration, 120), Math.min(duration / 2, 240));
 }
