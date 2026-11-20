@@ -72,7 +72,7 @@ function fromTidal(sender: chrome.runtime.MessageSender): boolean {
   if (sender.tab?.id === undefined || sender.frameId !== 0 || !sender.url) return false;
   try {
     const url = new URL(sender.url);
-    return url.protocol === 'https:' && ['listen.tidal.com', 'www.listen.tidal.com'].includes(url.hostname);
+    return url.protocol === 'https:' && ['tidal.com', 'www.tidal.com', 'listen.tidal.com', 'www.listen.tidal.com'].includes(url.hostname);
   } catch { return false; }
 }
 

@@ -17,7 +17,7 @@ npm run build
 2. Click **Load unpacked** and select `dist/`.
 3. Open the extension and connect with your full Bluesky handle and a new
    [app password](https://bsky.app/settings/app-passwords).
-4. Open or reload [TIDAL](https://listen.tidal.com) and play a track.
+4. Open or reload [TIDAL](https://tidal.com) and play a track.
 5. Check the popup for playback progress, pending listens, and the last submission.
 
 Reload TIDAL after updating the extension. **Disconnect** stops tracking and

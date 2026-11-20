@@ -46,7 +46,7 @@ test('extension flow: connect, capture, survive restart, retry once, and protect
   const backgroundModule = process.env.TEST_BACKGROUND_BUNDLE ? '../dist/background.js' : '../src/background.ts';
   await import(backgroundModule);
   const ui = { id: runtimeId, url: mockChrome.runtime.getURL('popup.html') };
-  const page: chrome.runtime.MessageSender = { id: runtimeId, url: 'https://listen.tidal.com/album/1', tab: { id: 1 } as chrome.tabs.Tab, frameId: 0 };
+  const page: chrome.runtime.MessageSender = { id: runtimeId, url: 'https://tidal.com/album/1', tab: { id: 1 } as chrome.tabs.Tab, frameId: 0 };
   const send = (message: unknown, sender: chrome.runtime.MessageSender = ui) => new Promise<any>(resolve => {
     listener(message, sender, resolve);
   });

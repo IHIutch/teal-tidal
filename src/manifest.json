@@ -9,7 +9,7 @@
   "background": { "service_worker": "background.js", "type": "module" },
   "action": { "default_popup": "popup.html", "default_title": "Teal Tidal" },
   "content_scripts": [{
-    "matches": ["https://listen.tidal.com/*", "https://www.listen.tidal.com/*"],
+    "matches": ["https://tidal.com/*", "https://www.tidal.com/*", "https://listen.tidal.com/*", "https://www.listen.tidal.com/*"],
     "js": ["content.js"], "run_at": "document_idle"
   }],
   "content_security_policy": { "extension_pages": "script-src 'self'; object-src 'none'" }
