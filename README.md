@@ -41,9 +41,12 @@ tracked at a time; atcute handles session refresh and the account's PDS endpoint
 - Published listening history is public. The app password is never saved;
   session tokens are stored locally and kept out of the TIDAL content script.
 - TIDAL web player and Bluesky login only. No native Mac app or other PDS login UI.
-- Tracks below two minutes need their entire duration credited. Missing their
-  beginning or final sample can prevent submission. Browser throttling can also
-  undercount listening time. This prototype does not guess missing playback.
+- Tracks below two minutes need their entire duration credited. To account for
+  sampling, playback first seen within one second of the start includes that
+  initial second. A track change or repeat can complete a missing tail below
+  three seconds when elapsed time and the next position support it, provided
+  earlier listening was fully credited. These are bounded inferences, not proof
+  of natural completion. Larger gaps and browser throttling can still undercount.
 - TIDAL's player layout and Teal's schema may change. Some older Teal viewers
   only read the legacy collection and may not show these records.
 - Playback, pause detection, track changes, and multi-artist/album metadata have

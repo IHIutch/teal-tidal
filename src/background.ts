@@ -2,7 +2,7 @@ import { Client } from '@atcute/client';
 import { now as tid } from '@atcute/tid';
 import { PasswordSession, type PasswordSessionData } from '@atcute/password-session';
 import { boundedFetch, connect, publish } from './atproto';
-import { advance, qualified, toRecord, validSample } from './tracker';
+import { advance, finish, qualified, toRecord, validSample } from './tracker';
 import type { Command, Reply, Status, Store } from './types';
 
 const initial: Store = { queue: [], sent: 0 };
@@ -92,11 +92,15 @@ async function receiveSample(value: unknown, tabId: number, now: number) {
     store.listening = undefined;
   }
   store.owner = { tabId, seenAt: now };
+  const outgoing = finish(store.listening, value, now);
   store.listening = advance(store.listening, value, now);
-  const captured = !!session && qualified(store.listening);
-  if (captured && session) {
-    store.queue.push({ did: session.did, rkey: tid(), record: toRecord(store.listening) });
-    store.listening.queued = true;
+  let captured = false;
+  for (const play of [outgoing, store.listening]) {
+    if (play && session && qualified(play)) {
+      store.queue.push({ did: session.did, rkey: tid(), record: toRecord(play) });
+      play.queued = true;
+      captured = true;
+    }
   }
   // Persist the record and queued flag together, before attempting any network IO.
   await save();

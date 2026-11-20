@@ -101,6 +101,23 @@ test('extension flow: connect, capture, survive restart, retry once, and protect
   assert.equal(recordIds.length, 2);
   assert.equal(recordIds[0], recordIds[1]);
   assert.match(recordIds[0]!, /^[234567a-z]{13}$/);
+  // A short track's final sample can be replaced by the next track's sample.
+  for (let second = 1; second <= 89; second++) {
+    clock += 1000;
+    await send({ type: 'sample', sample: { track: {
+      id: '789', title: 'Short track', artists: ['Artist'], duration: 90,
+    }, position: second, playing: true } }, page);
+  }
+  clock += 1000;
+  await send(sample(0), page);
+  response = await send({ type: 'status' });
+  assert.equal(response.status.sent, 2);
+  assert.equal(response.status.lastSent.title, 'Short track');
+  assert.equal(response.status.listening.track.id, '123');
+  assert.equal(response.status.listening.listened, 0);
+  assert.equal(recordIds.length, 3);
+  await send(sample(0), page);
+  assert.equal(recordIds.length, 3);
   assert.equal((await send({ type: 'logout' })).ok, true);
   assert.equal(memory.session, undefined);
   response = await send({ type: 'status' });

@@ -66,3 +66,16 @@ Checked 2026-11-20 against FoxxMD's upstream master, pinned to [`d164f568a47874e
 The [latest stable release, 0.21.1](https://github.com/FoxxMD/multi-scrobbler/releases/tag/0.21.1), was published November 17, 2026, at commit `0fa664c2ec752eb1de7084e7560cba9ea9e7cd19`. Direct inspection confirms the same [rounded OR predicate](https://github.com/FoxxMD/multi-scrobbler/blob/0fa664c2ec752eb1de7084e7560cba9ea9e7cd19/src/backend/utils/TimeUtils.ts#L238-L268), [three-second finalization](https://github.com/FoxxMD/multi-scrobbler/blob/0fa664c2ec752eb1de7084e7560cba9ea9e7cd19/src/backend/sources/PlayerState/PositionalPlayerState.ts#L87-L124), and [Teal submission without a threshold override](https://github.com/FoxxMD/multi-scrobbler/blob/0fa664c2ec752eb1de7084e7560cba9ea9e7cd19/src/backend/scrobblers/TealfmScrobbler.ts#L129-L149). This does not assert the entire release and master are identical.
 
 This does **not resolve the lexicon/Piper disagreement**. Multi-Scrobbler supplies a third policy, derived from Last.fm guidance and configurable by the user. It neither requires full listening below two minutes nor imposes Piper's 30-second floor. For our short-track issue, it supplies precedent for bounded final-position inference and faster end polling, not authority to change Teal's threshold. Evaluate the old track before discarding it on transition, and handle missed beginning and ending samples separately. Copying its three-second endpoint bump alone will not satisfy our full-duration rule when initial listening was missed. Any chosen completion allowance should be documented as our accounting policy, with pause, seek, exact-boundary, and initial-gap cases checked explicitly.
+
+## Local implementation follow-up
+
+The threshold formula is unchanged. Initial playing samples at positions zero
+through one second now include that small initial interval. Before a track change
+or repeat resets the state, the worker evaluates the outgoing play. It can credit
+a tail below three seconds only if the previous play was active, all earlier
+position progress was credited, the next play is active within its first three
+seconds, and elapsed time covers the tail plus the next position within a maximum
+six-second sampling gap. This is a local inference policy, not an official Teal
+allowance or proof of natural completion. Larger missing starts remain uncredited.
+Tracker and worker tests cover completion, repeats, duplicate prevention, pauses,
+seeks, late starts, timing boundaries, and long gaps.

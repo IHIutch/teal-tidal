@@ -6,14 +6,28 @@ import type { ListeningState, PlayRecord, Sample } from './types';
 export function threshold(duration: number): number {
   return Math.max(Math.min(duration, 120), Math.min(duration / 2, 240));
 }
+function newPlay(previous: ListeningState, sample: Sample): boolean {
+  return previous.track.id !== sample.track.id || (sample.playing && sample.position < 3 &&
+    previous.position > Math.max(3, sample.track.duration - 3));
+}
+// Finalize the outgoing play before resetting it. Infer only a small tail when
+// the next play's position and elapsed time support a natural transition.
+export function finish(previous: ListeningState | undefined, sample: Sample, now: number): ListeningState | undefined {
+  if (!previous || !newPlay(previous, sample)) return undefined;
+  const remaining = previous.track.duration - previous.position;
+  const elapsed = (now - previous.sampledAt) / 1000;
+  const completed = previous.playing && sample.playing && sample.position <= 3 &&
+    remaining >= 0 && remaining < 3 && elapsed > 0 && elapsed <= 6 &&
+    elapsed >= remaining + sample.position && previous.listened >= previous.position;
+  return completed ? { ...previous, listened: previous.listened + remaining } : previous;
+}
 export function advance(previous: ListeningState | undefined, sample: Sample, now: number): ListeningState {
-  // MVP limitation: a short track needs its full duration credited. If its
-  // beginning or end wasn't sampled, it may not qualify before the next track.
-  const looped = previous && previous.track.id === sample.track.id && sample.playing &&
-    sample.position < 3 && previous.position > Math.max(3, sample.track.duration - 3);
-  if (!previous || previous.track.id !== sample.track.id || looped) {
-    return { track: sample.track, startedAt: now, sampledAt: now, position: sample.position,
-      playing: sample.playing, listened: 0, queued: false };
+  if (!previous || newPlay(previous, sample)) {
+    // The one-second poll can first see playback just after its beginning.
+    // Never backfill a track joined later or first observed paused.
+    const beginning = sample.playing && sample.position <= 1 ? sample.position : 0;
+    return { track: sample.track, startedAt: now - beginning * 1000, sampledAt: now, position: sample.position,
+      playing: sample.playing, listened: beginning, queued: false };
   }
   const elapsed = (now - previous.sampledAt) / 1000;
   const progress = sample.position - previous.position;
