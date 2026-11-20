@@ -47,7 +47,8 @@ tracked at a time; atcute handles session refresh and the account's PDS endpoint
 - TIDAL's player layout and Teal's schema may change. Some older Teal viewers
   only read the legacy collection and may not show these records.
 - Playback, pause detection, track changes, and multi-artist/album metadata have
-  been verified against live TIDAL in Brave. Live account publication is untested.
+  been verified against live TIDAL in Brave. A qualifying listen was published
+  successfully and read back from the account's PDS with the expected metadata.
 
 ## Check
 
