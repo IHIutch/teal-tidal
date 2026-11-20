@@ -15,13 +15,15 @@ npm run build
 
 1. Open `chrome://extensions` and enable **Developer mode**.
 2. Click **Load unpacked** and select `dist/`.
-3. Open the extension and connect with your full Bluesky handle and a new
-   [app password](https://bsky.app/settings/app-passwords).
+3. Open the extension. Local preview detects playback and shows the metadata
+   payload without an account. To publish, connect with your full Bluesky handle
+   and an [app password](https://bsky.app/settings/app-passwords).
 4. Open or reload [TIDAL](https://tidal.com) and play a track.
 5. Check the popup for playback progress, pending listens, and the last submission.
 
-Reload TIDAL after updating the extension. **Disconnect** stops tracking and
-clears pending listens. Already published listens remain in your account.
+Reload TIDAL after updating the extension. **Disconnect** stops publication and
+clears pending listens; local preview remains available. Already published listens
+remain in your account.
 
 ## How it works
 
@@ -44,7 +46,8 @@ tracked at a time; atcute handles session refresh and the account's PDS endpoint
   undercount listening time. This prototype does not guess missing playback.
 - TIDAL's player layout and Teal's schema may change. Some older Teal viewers
   only read the legacy collection and may not show these records.
-- Live TIDAL playback and live account publication still need a manual trial.
+- Playback, pause detection, track changes, and multi-artist/album metadata have
+  been verified against live TIDAL in Brave. Live account publication is untested.
 
 ## Check
 

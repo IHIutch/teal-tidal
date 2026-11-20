@@ -43,6 +43,7 @@ export interface Status {
   account?: { handle: string; did: string };
   listening?: ListeningState;
   queueLength: number;
+  payload?: PlayRecord;
   sent: number;
   lastSent?: Store['lastSent'];
   error?: string;

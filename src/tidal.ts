@@ -7,7 +7,7 @@ export function parseTime(text: string | null): number | undefined {
   if (parts.slice(1).some(p => Number(p) >= 60)) return undefined;
   return parts.reduce((total, part) => total * 60 + Number(part), 0);
 }
-export function readTidal(doc: Document): Sample | undefined {
+export function readTidal(doc: Document, metadata?: Pick<MediaMetadata, 'album'> | null): Sample | undefined {
   const player = doc.querySelector('#footerPlayer');
   if (!player) return undefined;
   const titleNode = player.querySelector('[data-test="footer-track-title"]');
@@ -16,7 +16,7 @@ export function readTidal(doc: Document): Sample | undefined {
   const title = titleNode?.textContent?.trim();
   const artists = [...player.querySelectorAll('a[data-test="grid-item-detail-text-title-artist"]')]
     .map(el => el.textContent?.trim()).filter((v): v is string => !!v);
-  const album = [...player.querySelectorAll('a[href^="/album/"]')]
+  const album = metadata?.album?.trim() || [...player.querySelectorAll('a[href^="/album/"]')]
     .find(el => !el.getAttribute('href')?.includes('/track/'))?.textContent?.trim();
   const position = parseTime(player.querySelector('[data-test="current-time"]')?.textContent ?? null);
   const duration = parseTime(player.querySelector('[data-test="duration"]')?.textContent ?? null);

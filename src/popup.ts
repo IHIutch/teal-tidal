@@ -7,9 +7,10 @@ let busy = false;
 function showError(message: string) { notice.textContent = message; notice.hidden = !message; }
 function render(status: Status) {
   element('setup').hidden = !!status.account;
-  element('connected').hidden = !status.account;
+  element('connection-state').textContent = status.account ? 'Connected' : 'Local preview';
   element('disconnect').hidden = !status.account && !status.queueLength;
-  element('account').textContent = status.account?.handle ?? '';
+  element('account').textContent = status.account?.handle ?? 'Nothing will be published without connecting an account.';
+  element('payload').textContent = status.payload ? JSON.stringify(status.payload, null, 2) : 'Waiting for TIDAL metadata.';
   element('sent').textContent = String(status.sent);
   element('pending').textContent = String(status.queueLength);
   element<HTMLButtonElement>('retry').disabled = !status.queueLength || busy;
@@ -21,7 +22,7 @@ function render(status: Status) {
   const progress = element<HTMLProgressElement>('progress');
   progress.max = state ? threshold(state.track.duration) : 1;
   progress.value = state ? Math.min(state.listened, progress.max) : 0;
-  element('progress-label').textContent = state ? (state.queued ? 'Listen captured. Check submitted / pending below.' :
+  element('progress-label').textContent = state ? (state.queued ? 'Listen captured. Check submitted / pending below.' : !status.account && state.listened >= progress.max ? 'Qualified locally. Nothing published.' :
     `${Math.floor(state.listened)} of ${Math.ceil(progress.max)} seconds listened`) : 'Only time spent playing counts.';
   showError(status.error ?? '');
 }

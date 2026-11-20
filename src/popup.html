@@ -12,7 +12,7 @@
     <p id="notice" role="status" aria-live="polite" hidden></p>
     <section id="setup">
       <h2>Connect your account</h2>
-      <p>Track TIDAL web player listens directly for teal.fm. Your published listening history is public.</p>
+      <p>Playback detection works without signing in. Connect to publish qualifying listens publicly for teal.fm.</p>
       <form id="login">
         <label for="handle">Bluesky / AT Protocol handle</label>
         <input id="handle" name="handle" placeholder="you.bsky.social" autocomplete="username" required>
@@ -22,8 +22,8 @@
         <button id="connect" type="submit">Connect & start tracking</button>
       </form>
     </section>
-    <section id="connected" hidden>
-      <h2>Connected</h2><p id="account"></p>
+    <section id="connected">
+      <h2 id="connection-state">Local preview</h2><p id="account"></p>
       <div class="player">
         <p id="player-state" class="eyebrow">Waiting for TIDAL</p>
         <h3 id="track">Play something you love.</h3>
@@ -33,6 +33,7 @@
       </div>
       <div class="stats"><p><strong id="sent">0</strong> submitted</p><p><strong id="pending">0</strong> pending</p></div>
       <p id="last" class="small"></p>
+      <details><summary>Metadata payload</summary><pre id="payload">Waiting for TIDAL metadata.</pre></details>
       <button id="retry" class="secondary" type="button">Retry pending listens</button>
     </section>
     <button id="disconnect" class="quiet" type="button" hidden>Disconnect & clear pending listens</button>

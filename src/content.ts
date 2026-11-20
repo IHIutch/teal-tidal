@@ -2,7 +2,7 @@ import { readTidal } from './tidal';
 
 async function sample() {
   try {
-    await chrome.runtime.sendMessage({ type: 'sample', sample: readTidal(document) ?? null });
+    await chrome.runtime.sendMessage({ type: 'sample', sample: readTidal(document, navigator.mediaSession?.metadata) ?? null });
   } catch {
     // Reloading the extension invalidates old content scripts. Reload TIDAL too.
     clearInterval(timer);

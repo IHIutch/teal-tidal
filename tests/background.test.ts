@@ -50,6 +50,21 @@ test('extension flow: connect, capture, survive restart, retry once, and protect
   const send = (message: unknown, sender: chrome.runtime.MessageSender = ui) => new Promise<any>(resolve => {
     listener(message, sender, resolve);
   });
+  const previewSample = { type: 'sample', sample: {
+    track: { id: '456', title: 'Preview track', artists: ['Preview artist'], duration: 300 }, position: 0, playing: true,
+  } };
+  await send(previewSample, page);
+  for (let second = 1; second <= 150; second++) {
+    clock += 1000;
+    previewSample.sample.position = second;
+    await send(previewSample, page);
+  }
+  const preview = (await send({ type: 'status' })).status;
+  assert.equal(preview.listening.listened, 150);
+  assert.equal(preview.payload.trackName, 'Preview track');
+  assert.equal(preview.payload.$type, 'fm.teal.feed.play');
+  assert.equal(preview.queueLength, 0);
+  assert.equal(recordIds.length, 0);
   const login = await send({ type: 'login', handle: 'test.bsky.social', password: 'test-app-password' });
   assert.equal(login.ok, true);
   assert.equal(accessLevel, 'TRUSTED_CONTEXTS');

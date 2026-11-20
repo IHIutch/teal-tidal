@@ -22,6 +22,10 @@ test('detects pause and refuses missing or malformed metadata', () => {
   assert.equal(readTidal(parseHTML(fixture.replace('5:00', '--:--')).document), undefined);
   assert.equal(readTidal(parseHTML('<div>Login page</div>').document), undefined);
 });
+test('reads album metadata from Media Session when the footer only names a playlist', () => {
+  const { document } = parseHTML(fixture.replace('<a href="/album/999">Example album</a>', '<a href="/playlist/123">Top Tracks</a>'));
+  assert.equal(readTidal(document, { album: 'New Energy' })?.track.album, 'New Energy');
+});
 test('parses timestamps conservatively', () => {
   assert.equal(parseTime(' 01:30 '), 90);
   assert.equal(parseTime('1:02:03'), 3723);

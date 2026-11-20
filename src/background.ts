@@ -29,7 +29,7 @@ function save() { return chrome.storage.local.set({ store }); }
 function status(): Status {
   const live = store.listening && Date.now() - store.listening.sampledAt < 10_000 ? store.listening : undefined;
   return { account: session ? { handle: session.handle, did: session.did } : undefined,
-    listening: live, queueLength: store.queue.length, sent: store.sent,
+    listening: live, payload: live ? toRecord(live) : undefined, queueLength: store.queue.length, sent: store.sent,
     lastSent: store.lastSent, error: store.error };
 }
 
@@ -77,7 +77,6 @@ function fromTidal(sender: chrome.runtime.MessageSender): boolean {
 }
 
 async function receiveSample(value: unknown, tabId: number, now: number) {
-  if (!session) return;
   if (value === null) {
     if (store.owner?.tabId === tabId && store.listening) {
       store.listening.playing = false;
@@ -94,8 +93,8 @@ async function receiveSample(value: unknown, tabId: number, now: number) {
   }
   store.owner = { tabId, seenAt: now };
   store.listening = advance(store.listening, value, now);
-  const captured = qualified(store.listening);
-  if (captured) {
+  const captured = !!session && qualified(store.listening);
+  if (captured && session) {
     store.queue.push({ did: session.did, rkey: tid(), record: toRecord(store.listening) });
     store.listening.queued = true;
   }
