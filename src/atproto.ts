@@ -15,9 +15,8 @@ export async function connect(handle: string, password: string): Promise<Passwor
   return auth.session;
 }
 // Stable TID + putRecord makes retries idempotent, including lost responses.
-export async function publish(client: Client, play: PendingPlay): Promise<string> {
-  const result = await ok(client.post('com.atproto.repo.putRecord', {
+export async function publish(client: Client, play: PendingPlay): Promise<void> {
+  await ok(client.post('com.atproto.repo.putRecord', {
     input: { repo: play.did, collection: 'fm.teal.feed.play', rkey: play.rkey, record: { ...play.record } },
   }));
-  return result.uri;
 }

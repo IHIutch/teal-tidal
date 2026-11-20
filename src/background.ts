@@ -54,10 +54,10 @@ async function flush() {
   for (const play of [...store.queue]) {
     if (play.did !== did) continue;
     try {
-      const uri = await publish(client, play);
+      await publish(client, play);
       store.queue.splice(store.queue.indexOf(play), 1);
       store.sent++;
-      store.lastSent = { title: play.record.trackName, uri, at: Date.now() };
+      store.lastSent = { title: play.record.trackName };
       store.error = undefined;
     } catch {
       store.error ??= 'Could not submit. Retry when online, or reconnect if your session expired.';

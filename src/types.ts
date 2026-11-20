@@ -36,7 +36,7 @@ export interface Store {
   listening?: ListeningState;
   queue: PendingPlay[];
   sent: number;
-  lastSent?: { title: string; uri: string; at: number };
+  lastSent?: { title: string };
   error?: string;
 }
 export interface Status {

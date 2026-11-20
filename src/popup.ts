@@ -29,14 +29,20 @@ async function send(command: Command) {
   const reply: Reply = await chrome.runtime.sendMessage(command);
   if (!reply?.ok) throw new Error(reply?.error ?? 'Extension unavailable. Reload it and TIDAL.');
   render(reply.status);
+  return reply.status;
 }
 async function action(command: Command) {
   busy = true;
   const buttons = [...document.querySelectorAll<HTMLButtonElement>('button')];
   buttons.forEach(button => button.disabled = true);
-  try { await send(command); }
+  let status: Status | undefined;
+  try { status = await send(command); }
   catch (error) { showError(error instanceof Error ? error.message : 'Request failed.'); }
-  finally { busy = false; buttons.forEach(button => button.disabled = false); }
+  finally {
+    busy = false;
+    buttons.forEach(button => button.disabled = false);
+    if (status) render(status);
+  }
 }
 element<HTMLFormElement>('login').addEventListener('submit', event => {
   event.preventDefault();
