@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "A tiny TIDAL to teal.fm browser extension built with TypeScript and atcute",
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && tailwindcss -i src/popup.css -o dist/popup.css --minify",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
     "check": "npm run typecheck && npm test && npm run build"
@@ -19,9 +19,11 @@
     "@atcute/tid": "^1.1.4"
   },
   "devDependencies": {
+    "@tailwindcss/cli": "^4.3.5",
     "@types/chrome": "^0.3.7",
     "@types/node": "^26.6.6",
     "linkedom": "^0.18.15",
+    "tailwindcss": "^4.3.5",
     "tsdown": "^0.23.7",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"

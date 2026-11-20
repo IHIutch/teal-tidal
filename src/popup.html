@@ -1,43 +1,43 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="scheme-dark bg-slate-950 font-sans text-sm/6 text-slate-100">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Teal Tidal</title>
   <link rel="stylesheet" href="popup.css">
 </head>
-<body>
-  <main>
-    <header><span class="mark" aria-hidden="true">t</span><div><h1>Teal Tidal</h1><p>Your listening, in your account.</p></div><span class="badge">MVP</span></header>
-    <p id="notice" role="status" aria-live="polite" hidden></p>
-    <section id="setup">
-      <h2>Connect your account</h2>
-      <p>Playback detection works without signing in. Connect to publish qualifying listens publicly for teal.fm.</p>
-      <form id="login">
-        <label for="handle">Bluesky / AT Protocol handle</label>
-        <input id="handle" name="handle" placeholder="you.bsky.social" autocomplete="username" required>
-        <label for="password">App password</label>
-        <input id="password" name="password" type="password" placeholder="xxxx-xxxx-xxxx-xxxx" autocomplete="off" required>
-        <p class="small">Use an <a href="https://bsky.app/settings/app-passwords" target="_blank" rel="noreferrer">app password</a>, not your main password. It is used to sign in and is never saved. Session tokens stay in this browser.</p>
-        <button id="connect" type="submit">Connect & start tracking</button>
+<body class="min-w-96">
+  <main class="mx-auto w-full max-w-md p-6">
+    <header class="mb-6 flex items-center gap-3"><span class="grid size-11 shrink-0 place-items-center rounded-xl bg-teal-200 font-serif text-4xl italic text-teal-950" aria-hidden="true">t</span><div><h1 class="text-xl font-semibold tracking-tight">Teal Tidal</h1><p class="text-xs text-slate-400">Your listening, in your account.</p></div><span class="ml-auto rounded border border-teal-800 px-2 py-1 text-xs tracking-widest text-teal-200">MVP</span></header>
+    <p id="notice" class="mb-5 rounded-lg bg-amber-950 p-3 text-xs text-amber-200" role="status" aria-live="polite" hidden></p>
+    <section id="setup" class="mb-6">
+      <h2 class="mb-1 text-base font-semibold">Connect your account</h2>
+      <p class="text-slate-400">Playback detection works without signing in. Connect to publish qualifying listens publicly for teal.fm.</p>
+      <form id="login" class="mt-5">
+        <label class="mt-3 mb-1.5 block text-xs text-slate-200" for="handle">Bluesky / AT Protocol handle</label>
+        <input class="w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-2.5 placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-200" id="handle" name="handle" placeholder="you.bsky.social" autocomplete="username" required>
+        <label class="mt-3 mb-1.5 block text-xs text-slate-200" for="password">App password</label>
+        <input class="w-full rounded-lg border border-slate-600 bg-slate-900 px-3 py-2.5 placeholder:text-slate-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-200" id="password" name="password" type="password" placeholder="xxxx-xxxx-xxxx-xxxx" autocomplete="off" required>
+        <p class="mt-3 text-xs text-slate-400">Use an <a class="text-teal-200 underline underline-offset-2 hover:text-teal-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-200" href="https://bsky.app/settings/app-passwords" target="_blank" rel="noreferrer">app password</a>, not your main password. It is used to sign in and is never saved. Session tokens stay in this browser.</p>
+        <button id="connect" class="mt-4 bg-teal-200 text-teal-950 hover:bg-teal-100 w-full cursor-pointer rounded-lg p-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-200 disabled:cursor-default disabled:opacity-50" type="submit">Connect & start tracking</button>
       </form>
     </section>
     <section id="connected">
-      <h2 id="connection-state">Local preview</h2><p id="account"></p>
-      <div class="player">
-        <p id="player-state" class="eyebrow">Waiting for TIDAL</p>
-        <h3 id="track">Play something you love.</h3>
-        <p id="artist">Open the TIDAL web player to begin.</p>
-        <progress id="progress" max="1" value="0" aria-label="Listening time toward submission"></progress>
-        <p id="progress-label" class="small">Only time spent playing counts.</p>
+      <h2 id="connection-state" class="mb-1 text-base font-semibold">Local preview</h2><p id="account" class="max-w-60 text-xs wrap-anywhere text-slate-400"></p>
+      <div class="mt-5 mb-4 rounded-xl border border-teal-900 bg-teal-950 p-5">
+        <p id="player-state" class="mb-3 text-xs tracking-widest text-teal-200 uppercase">Waiting for TIDAL</p>
+        <h3 id="track" class="mb-1 text-xl font-semibold wrap-anywhere">Play something you love.</h3>
+        <p id="artist" class="wrap-anywhere text-slate-400">Open the TIDAL web player to begin.</p>
+        <progress id="progress" class="mt-5 mb-1.5 h-1.5 w-full accent-teal-200" max="1" value="0" aria-label="Listening time toward submission"></progress>
+        <p id="progress-label" class="text-xs text-slate-400">Only time spent playing counts.</p>
       </div>
-      <div class="stats"><p><strong id="sent">0</strong> submitted</p><p><strong id="pending">0</strong> pending</p></div>
-      <p id="last" class="small"></p>
-      <details><summary>Metadata payload</summary><pre id="payload">Waiting for TIDAL metadata.</pre></details>
-      <button id="retry" class="secondary" type="button">Retry pending listens</button>
+      <div class="flex gap-8 pb-3 text-slate-400"><p><strong class="font-semibold text-slate-100" id="sent">0</strong> submitted</p><p><strong class="font-semibold text-slate-100" id="pending">0</strong> pending</p></div>
+      <p id="last" class="pb-4 text-xs wrap-anywhere text-slate-400"></p>
+      <details class="my-3"><summary class="cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-200">Metadata payload</summary><pre id="payload" class="mt-2 text-xs wrap-anywhere whitespace-pre-wrap text-slate-400">Waiting for TIDAL metadata.</pre></details>
+      <button id="retry" class="bg-teal-900 text-teal-100 hover:bg-teal-800 w-full cursor-pointer rounded-lg p-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-200 disabled:cursor-default disabled:opacity-50" type="button">Retry pending listens</button>
     </section>
-    <button id="disconnect" class="quiet" type="button" hidden>Disconnect & clear pending listens</button>
-    <footer><a href="https://tidal.com" target="_blank" rel="noreferrer">Open TIDAL</a><span>No server. No Last.fm.</span></footer>
+    <button id="disconnect" class="mt-4 w-full cursor-pointer rounded-lg p-2 text-xs text-slate-400 underline hover:text-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-200 disabled:cursor-default disabled:opacity-50" type="button" hidden>Disconnect & clear pending listens</button>
+    <footer class="mt-6 flex justify-between gap-3 border-t border-slate-800 pt-4 text-xs text-slate-400"><a class="text-teal-200 underline underline-offset-2 hover:text-teal-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-200" href="https://tidal.com" target="_blank" rel="noreferrer">Open TIDAL</a><span>No server. No Last.fm.</span></footer>
   </main>
   <script type="module" src="popup.js"></script>
 </body>
