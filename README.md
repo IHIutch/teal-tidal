@@ -28,8 +28,7 @@ remain in your account.
 ## How it works
 
 `src/` contains the extension source and assets. `tsdown.config.ts` builds them
-into `dist/`. Tailwind CLI compiles the popup's utility classes into a local
-stylesheet using the default theme. The extension reads TIDAL's player once per second and counts
+into `dist/`. The extension reads TIDAL's player once per second and counts
 observed playback, excluding pauses, obvious seeks, and long sampling gaps.
 
 Qualifying listens are saved locally, then submitted as `fm.teal.feed.play`

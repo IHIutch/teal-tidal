@@ -23,7 +23,7 @@ export default defineConfig(
       onlyImport: [],
     },
     copy: name === 'background'
-      ? ['src/manifest.json', 'src/popup.html', 'LICENSE', 'THIRD_PARTY_NOTICES.md']
+      ? ['src/manifest.json', 'src/popup.html', { from: 'src/icons/*.png', to: 'dist/icons' }, 'LICENSE', 'THIRD_PARTY_NOTICES.md']
       : undefined,
   })),
 );

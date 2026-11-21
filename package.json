@@ -6,7 +6,8 @@
     "build": "tsdown && tailwindcss -i src/popup.css -o dist/popup.css --minify",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
-    "check": "npm run typecheck && npm test && npm run build"
+    "check": "npm run typecheck && npm test && npm run build",
+    "package": "npm run check && node scripts/package.mjs"
   },
   "keywords": [],
   "author": "",
