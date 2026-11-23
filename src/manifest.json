@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Teal Tidal",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Track TIDAL web player listens directly in your AT Protocol account for teal.fm.",
   "minimum_chrome_version": "120",
   "permissions": ["storage", "alarms"],

@@ -33,9 +33,12 @@ Independent software, not affiliated with TIDAL, Bluesky, or teal.fm.
 
 ## Links
 
-- Homepage: https://ihiutch.github.io/teal-tidal/
-- Privacy: https://ihiutch.github.io/teal-tidal/privacy.html
+- Homepage: https://github.com/IHIutch/teal-tidal
+- Privacy: https://github.com/IHIutch/teal-tidal/blob/main/docs/privacy.md
 - Support: https://github.com/IHIutch/teal-tidal/issues
+
+These links require repository access during the private beta. Publish a publicly
+accessible policy before a Chrome Web Store submission.
 
 ## Privacy practices fields
 

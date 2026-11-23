@@ -1,6 +1,6 @@
 {
   "name": "teal-tidal",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A tiny TIDAL to teal.fm browser extension built with TypeScript and atcute",
   "scripts": {
     "build": "tsdown && tailwindcss -i src/popup.css -o dist/popup.css --minify",

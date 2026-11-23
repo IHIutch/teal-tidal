@@ -47,7 +47,7 @@ export function toRecord(state: ListeningState): PlayRecord {
     ...(state.track.album ? { releaseName: state.track.album } : {}),
     duration: Math.round(state.track.duration), playedTime: new Date(state.startedAt).toISOString(),
     originUri: `https://tidal.com/track/${state.track.id}`, musicServiceUri: 'https://tidal.com',
-    submissionClientAgent: 'app.teal-tidal.extension/0.1.0',
+    submissionClientAgent: 'app.teal-tidal.extension/0.1.1',
   };
 }
 export function validSample(value: unknown): value is Sample {
